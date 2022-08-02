@@ -1,6 +1,6 @@
 {
-  "name": "@web3/react-hooks",
-  "version": "0.0.1",
+  "name": "web3-react-hooks",
+  "version": "0.0.2",
   "description": "React hooks that interact with web3 systems like metamask.",
   "main": "index.js",
   "scripts": {
@@ -10,5 +10,14 @@
   "license": "MIT",
   "dependencies": {
     "use-interval": "^1.4.0"
-  }
+  },
+  "devDependencies": {},
+  "keywords": [
+    "web3",
+    "ethereum",
+    "metamask",
+    "provider",
+    "react",
+    "hook"
+  ]
 }
