@@ -36,3 +36,11 @@ export default function UserProfile() {
 
 }
 ```
+
+## Feature requests
+
+Do you need a hook not in this list? [Suggest a feature here](https://github.com/actuallymentor/web3-react-hooks/issues).
+
+## Contributing
+
+Pull requests are welcome! If you want to implement backwards-incompatible changes please check in first.
