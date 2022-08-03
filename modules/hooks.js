@@ -8,13 +8,12 @@ export function useIsConnected() {
 
 	// Check for initial status
 	const [ isConnected, setIsConnected ] = useState( false )
-	const ID = useRef( `${ Math.random() }`.slice( 2, 8 ) ).current
 
 	const update_connected = f => {
 		const connected = window.ethereum?.isConnected()
 		setIsConnected( connected )
-		if( connected ) return log( `${ ID } 💡 Wallet connected` )
-		log( `${ ID } 🔌 Wallet disconnected` )
+		if( connected ) return log( `🦊 ✅  Provider connected to RPC` )
+		log( `🦊 🛑  Provider disconnected from RPC` )
 	}
 
 	// Listen to disconnects
@@ -26,7 +25,7 @@ export function useIsConnected() {
 	useInterval( () => {
 		const connected = window.ethereum?.isConnected()
 		if( connected != isConnected ) {
-			log( `💡 Wallet connection status changed from ${ isConnected } to ${ connected }` )
+			log( `🦊 ♻️ Wallet connection status changed from ${ isConnected } to ${ connected }` )
 			setIsConnected( connected )
 		}
 	}, isConnected ? null : 1000, true )
@@ -36,12 +35,39 @@ export function useIsConnected() {
 }
 
 // Chain ID
-export function useChainID( defaultChain='0x1' ) {
+export function useChainID( defaultChain ) {
 
 	const isConnected = useIsConnected()
 	const [ chainID, setChainID ] = useState( defaultChain )
 
-	useEffect( f => setListenerAndReturnUnlistener( window.ethereum, 'chainChanged', setChainID ), [ isConnected ] )
+	useEffect( f => setListenerAndReturnUnlistener( window.ethereum, 'chainChanged', chain_id => {
+		log( `⛓ ♻️ Chain ID changed from ${ chainID } to ${ chain_id }` )
+		setChainID( chain_id )
+	} ), [ isConnected ] )
+
+	// Check for initial chain
+	useEffect( (  ) => {
+
+		let cancelled = false;
+	
+		( async () => {
+	
+			try {
+	
+				const chain_id = await window.ethereum.request( { method: 'eth_chainId' } )
+				if( cancelled ) return
+				log( `⛓ Initial chain id: `, chain_id )
+				setChainID( chain_id )
+				
+			} catch( e ) {
+				log( `⛓ Error retreiving chain ID: `, e )
+			}
+	
+		} )( )
+	
+		return () => cancelled = true
+	
+	}, [] )
 
 	return chainID
 
@@ -54,7 +80,6 @@ export function useAddress() {
 
 	const [ address, setAddress ] = useState( window.ethereum?.selectedAddress )
 	const isConnected = useIsConnected()
-	const ID = useRef( `${ Math.random() }`.slice( 2, 8 ) ).current
 
 	// Keep synced with provider
 	useEffect( f => {
@@ -73,7 +98,7 @@ export function useAddress() {
 		const unsubscribe = setListenerAndReturnUnlistener( window.ethereum, 'accountsChanged', addresses => {
 
 				// Get address through listener
-				log( `${ ID } ♻️ Selected address ${ window.ethereum.selectedAddress }, all addresses changed to `, addresses )
+				log( `💳 ♻️ Selected address ${ window.ethereum.selectedAddress }, all addresses changed to `, addresses )
 				const [ newAddress ] = addresses
 
 				// New address? Set it to state and stop interval
@@ -82,7 +107,7 @@ export function useAddress() {
 		} )
 
 		return () => {
-			log( `${ ID } Stop address listener...` )
+			log( `💳 Stop address listener...` )
 			unsubscribe()
 		}
 
@@ -96,7 +121,6 @@ export function useAddress() {
 	}, address ? null : 1000, true )
 
 
-	log( `${ ID } useAddress: `, address )
 	return address
 
 }
@@ -117,13 +141,13 @@ export function useENS(  ) {
 
 			try {
 
-				const ens = await ens_from_address( address )
+				const ens = await provider.lookupAddress( address )
 				if( cancelled ) return
-				log( `ENS changed to `, ens )
+				log( `🌐 ENS changed to `, ens )
 				setENS( ens )
 
 			} catch( e ) {
-				log( `Error in useENS: `, e )
+				log( `🌐 ⚠️ Error in useENS: `, e )
 			}
 
 		} )( )
