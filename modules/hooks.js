@@ -28,10 +28,10 @@ export function useIsConnected() {
 	useInterval( () => {
 		const connected = window.ethereum?.isConnected()
 		if( connected != isConnected ) {
-			log( `🦊 🔄 Wallet connection status changed from ${ isConnected } to ${ connected }` )
+			log( `🦊 🔄 Provider RPC connection status changed from ${ isConnected } to ${ connected }` )
 			setIsConnected( connected )
 		}
-	}, isConnected ? null : 1000, true )
+	}, isConnected ? null : 1000 )
 
 	return isConnected
 

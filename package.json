@@ -1,6 +1,6 @@
 {
   "name": "web3-react-hooks",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "React hooks that interact with web3 systems like metamask.",
   "main": "index.js",
   "scripts": {
@@ -19,5 +19,13 @@
     "provider",
     "react",
     "hook"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/actuallymentor/web3-react-hooks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/actuallymentor/web3-react-hooks/issues"
+  },
+  "homepage": "https://github.com/actuallymentor/web3-react-hooks#readme"
 }

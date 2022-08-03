@@ -7,17 +7,17 @@ export const log = ( ...messages ) => {
 	if( dev ) console.log( `[ ${ now.toLocaleTimeString() }:${ now.getMilliseconds() } ]`, ...messages )
 }
 
-export function setListenerAndReturnUnlistener( parent, event, callback ) {
+export function setListenerAndReturnUnlistener( parent, event, callback, verbose=false ) {
 
 	if( !parent ) return log( `${ event } listener failed` )
 
 	// Set listener
 	parent.on( event, callback )
-	log( `🔈 Created ${ event } listener` )
+	if( verbose ) log( `🔈 Created ${ event } listener` )
 
 	// Return unsubscriber
 	return () => {
-		log( `🔇 Unregistering ${ event } listener` )
+		if( verbose ) log( `🔇 Unregistering ${ event } listener` )
 		parent.removeListener( event, callback )
 	}
 
