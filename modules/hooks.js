@@ -25,7 +25,7 @@ export function useIsConnected() {
 	useInterval( () => {
 		const connected = window.ethereum?.isConnected()
 		if( connected != isConnected ) {
-			log( `🦊 ♻️ Wallet connection status changed from ${ isConnected } to ${ connected }` )
+			log( `🦊 🔄 Wallet connection status changed from ${ isConnected } to ${ connected }` )
 			setIsConnected( connected )
 		}
 	}, isConnected ? null : 1000, true )
@@ -41,7 +41,7 @@ export function useChainID( defaultChain ) {
 	const [ chainID, setChainID ] = useState( defaultChain )
 
 	useEffect( f => setListenerAndReturnUnlistener( window.ethereum, 'chainChanged', chain_id => {
-		log( `⛓ ♻️ Chain ID changed from ${ chainID } to ${ chain_id }` )
+		log( `⛓ 🔄 Chain ID changed from ${ chainID } to ${ chain_id }` )
 		setChainID( chain_id )
 	} ), [ isConnected ] )
 
@@ -56,11 +56,11 @@ export function useChainID( defaultChain ) {
 	
 				const chain_id = await window.ethereum.request( { method: 'eth_chainId' } )
 				if( cancelled ) return
-				log( `⛓ Initial chain id: `, chain_id )
+				log( `⛓ Initial chain id: ${ chain_id }` )
 				setChainID( chain_id )
 				
 			} catch( e ) {
-				log( `⛓ Error retreiving chain ID: `, e )
+				log( `⛓ 🚨 Error retreiving chain ID: `, e )
 			}
 	
 		} )( )
@@ -84,7 +84,7 @@ export function useAddress() {
 	// Keep synced with provider
 	useEffect( f => {
 
-		log( `💳 Setting selected address to useAddress state: `, window.ethereum.selectedAddress )
+		log( `💳 Setting selected address to useAddress state: ${ window.ethereum.selectedAddress }` )
 		setAddress( window.ethereum.selectedAddress )
 
 	}, [ isConnected ] )
@@ -95,10 +95,10 @@ export function useAddress() {
 		// If not connected, do not listen
 		if( !isConnected ) return
 
-		const unsubscribe = setListenerAndReturnUnlistener( window.ethereum, 'accountsChanged', addresses => {
+		return setListenerAndReturnUnlistener( window.ethereum, 'accountsChanged', addresses => {
 
 				// Get address through listener
-				log( `💳 ♻️ Selected address ${ window.ethereum.selectedAddress }, all addresses changed to `, addresses )
+				log( `💳 🔄 Selected address ${ window.ethereum.selectedAddress }, all addresses changed to: `, addresses )
 				const [ newAddress ] = addresses
 
 				// New address? Set it to state and stop interval
@@ -106,14 +106,9 @@ export function useAddress() {
 				
 		} )
 
-		return () => {
-			log( `💳 Stop address listener...` )
-			unsubscribe()
-		}
-
 	}, [ isConnected ] )
 	
-	// Since metamask does not trigger reliable connect events, add a listener
+	// Since metamask does not trigger "wallet connected" events, add a looping check
 	useInterval( () => {
 
 		if( address !== window.ethereum?.selectedAddress ) setAddress( window.ethereum.selectedAddress )
@@ -141,13 +136,14 @@ export function useENS(  ) {
 
 			try {
 
+
 				const ens = await provider.lookupAddress( address )
 				if( cancelled ) return
-				log( `🌐 ENS changed to `, ens )
+				log( `🌐 🔄 Address ${ address } resolved to ${ ens }` )
 				setENS( ens )
 
 			} catch( e ) {
-				log( `🌐 ⚠️ Error in useENS: `, e )
+				log( `🌐 🚨 Error in useENS: `, e )
 			}
 
 		} )( )

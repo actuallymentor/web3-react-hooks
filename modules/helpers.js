@@ -13,11 +13,11 @@ export function setListenerAndReturnUnlistener( parent, event, callback ) {
 
 	// Set listener
 	parent.on( event, callback )
-	log( `✅ Created ${ event } listener` )
+	log( `🔈 Created ${ event } listener` )
 
 	// Return unsubscriber
 	return () => {
-		log( `🗑 Unregistering ${ event }` )
+		log( `🔇 Unregistering ${ event } listener` )
 		parent.removeListener( event, callback )
 	}
 
