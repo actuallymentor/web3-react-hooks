@@ -4,6 +4,26 @@ import useInterval from 'use-interval'
 
 
 /**
+* Ethers-based provider
+* @returns {Object} provider instance
+*/
+const { providers } = require( 'ethers' )
+export function useProvider() {
+
+	const [ provider, set_provider ] = useState()
+	const connected = useIsConnected()
+
+	useEffect( () => {
+		if( !window.ethereum ) return log( `⚙️ No window.ethereum, cannot create provider instance` )
+		const new_provider = new providers.Web3Provider( window.ethereum )
+		set_provider( new_provider )
+	}, [ connected ] )
+
+	return provider
+
+}
+
+/**
 * Connection state of the provider
 * @returns {Boolean} whether the provider is connected to it's RPC endpint
 */
@@ -37,6 +57,7 @@ export function useIsConnected() {
 
 }
 
+
 /**
 * The currencly selected chain ID
 * @returns {String} the ID of the currently selected chain 
@@ -55,6 +76,7 @@ export function useChainID() {
 	// Check for initial chain
 	useEffect( (  ) => {
 
+		if( !window.ethereum ) return
 		let cancelled = false;
 	
 		( async () => {
@@ -93,6 +115,7 @@ export function useAddress() {
 	// Keep synced with provider
 	useEffect( f => {
 
+		if( !window.ethereum ) return
 		log( `💳 Setting selected address to useAddress state: ${ window.ethereum.selectedAddress }` )
 		setAddress( window.ethereum.selectedAddress )
 
@@ -136,6 +159,7 @@ export function useAddress() {
 export function useENS(  ) {
 
 	const address = useAddress()
+	const provider = useProvider()
 	const [ ENS, setENS ] = useState(  )
 
 	// Resolve ENS on address changed
@@ -147,7 +171,7 @@ export function useENS(  ) {
 
 			try {
 
-
+				if( !provider ) return
 				const ens = await provider.lookupAddress( address )
 				if( cancelled ) return
 				log( `🌐 🔄 Address ${ address } resolved to ${ ens }` )
@@ -162,7 +186,7 @@ export function useENS(  ) {
 		return () => cancelled = true
 
 
-	}, [ address ] )
+	}, [ address, provider ] )
 
 	return ENS
 
