@@ -1,6 +1,6 @@
 {
   "name": "web3-react-hooks",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "React hooks that interact with web3 systems like Metamask.",
   "main": "index.js",
   "scripts": {
