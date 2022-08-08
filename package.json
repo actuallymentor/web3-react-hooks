@@ -1,7 +1,7 @@
 {
   "name": "web3-react-hooks",
   "version": "0.0.9",
-  "description": "React hooks that interact with web3 systems like metamask.",
+  "description": "React hooks that interact with web3 systems like Metamask.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
