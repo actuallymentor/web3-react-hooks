@@ -9,8 +9,14 @@ import useInterval from "use-interval"
 */
 export function useAddress() {
 
-	const [ address, setAddress ] = useState( window.ethereum?.selectedAddress )
+	const [ address, setAddress ] = useState()
 	const isConnected = useIsConnected()
+
+	// On hook mount, load current address
+	useEffect( () => {
+		log( `💳 🎬 useAddress mounted, getting state from window.ethereum` )
+		if( window.ethereum?.selectedAddress) setAddress( window.ethereum?.selectedAddress )
+	}, [] )
 
 	// Keep synced with provider
 	useEffect( f => {
@@ -30,11 +36,11 @@ export function useAddress() {
 		return setListenerAndReturnUnlistener( window.ethereum, 'accountsChanged', addresses => {
 
 				// Get address through listener
-				log( `💳 🔄 Selected address ${ window.ethereum.selectedAddress }, all addresses changed to: `, addresses )
+				log( `💳 🔄 accountsChanged - Current state ${ address }, selected address ${ window.ethereum.selectedAddress }, all addresses changed to: `, addresses )
 				const [ newAddress ] = addresses
 
 				// New address? Set it to state and stop interval
-				if( address !== newAddress ) setAddress( newAddress )
+				setAddress( newAddress )
 				
 		} )
 
